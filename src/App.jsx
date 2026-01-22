@@ -899,8 +899,8 @@ function App() {
       {/* Contact Section */}
       <section id="contatti" ref={contactRef} className="py-32 md:py-48 bg-[var(--black-light)]">
         <div className="px-6 md:px-12 lg:px-24">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24">
-            <div>
+          <div className="flex flex-col lg:flex-row gap-12 lg:gap-16">
+            <div className="lg:w-[35%] lg:flex-shrink-0">
               <span className="font-grotesk text-xs tracking-[0.5em] uppercase text-[var(--red)] block mb-6">
                 (05) — Contatti
               </span>
@@ -967,8 +967,8 @@ function App() {
               </a>
             </div>
 
-            <div className="contact-map">
-              <div className="aspect-square overflow-hidden relative group">
+            <div className="contact-map lg:flex-1">
+              <div className="overflow-hidden relative group h-[400px] lg:h-full lg:min-h-[600px]">
                 <iframe
                   src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2768.123456789!2d10.3456789!3d46.0654321!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDbCsDAzJzU1LjYiTiAxMMKwMjAnNDQuNCJF!5e0!3m2!1sit!2sit!4v1234567890"
                   width="100%"
@@ -978,7 +978,7 @@ function App() {
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
                   title="PROTOS LAB Location"
-                  className="group-hover:filter-none transition-all duration-700"
+                  className="absolute inset-0 w-full h-full group-hover:filter-none transition-all duration-700"
                 />
                 <div className="absolute inset-0 bg-[var(--red)]/5 mix-blend-multiply pointer-events-none group-hover:opacity-0 transition-opacity duration-700" />
               </div>
