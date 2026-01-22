@@ -22,22 +22,14 @@ body {
   font-family: 'Bebas Neue', sans-serif;
 }
 
-/* Custom scrollbar */
+/* Hide scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
+  display: none;
 }
 
-::-webkit-scrollbar-track {
-  background: #0a0a0a;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #C41E3A;
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #a01830;
+html {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 /* Animations */
