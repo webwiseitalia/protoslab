@@ -1,4 +1,4 @@
-import { useRef, useLayoutEffect } from 'react'
+import { useRef, useLayoutEffect, useState, useEffect } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
@@ -29,6 +29,17 @@ function App() {
   const contactRef = useRef(null)
   const cursorRef = useRef(null)
   const cursorFollowerRef = useRef(null)
+
+  const [isScrolled, setIsScrolled] = useState(false)
+
+  // Detect scroll for navbar glassmorphism
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50)
+    }
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   // ========================
   // MAIN ANIMATIONS
@@ -76,21 +87,23 @@ function App() {
       // HERO INTRO ANIMATION
       const heroTl = gsap.timeline({ defaults: { ease: 'power4.out' } })
 
+      // Initial states
       gsap.set('.hero-title-line', { yPercent: 100 })
-      gsap.set('.hero-subtitle', { opacity: 0, y: 30 })
-      gsap.set('.hero-badge', { opacity: 0, scale: 0.8 })
-      gsap.set('.hero-cta', { opacity: 0, y: 40 })
-      gsap.set('.hero-image-container', { clipPath: 'inset(100% 0 0 0)' })
-      gsap.set('.hero-image', { scale: 1.5 })
-      gsap.set('.nav-logo', { opacity: 0, x: -30 })
-      gsap.set('.nav-link', { opacity: 0, y: -20 })
-      gsap.set('.nav-cta', { opacity: 0, scale: 0.9 })
-      gsap.set('.hero-scroll', { opacity: 0 })
+      gsap.set('.hero-subtitle', { opacity: 0, y: 20 })
+      gsap.set('.hero-tag', { opacity: 0, y: -20 })
+      gsap.set('.hero-cta', { opacity: 0, y: 20 })
+      gsap.set('.hero-bottom', { opacity: 0 })
+      gsap.set('.hero-image-container', { clipPath: 'inset(0 0 100% 0)' })
+      gsap.set('.hero-image', { scale: 1.3 })
+      gsap.set('.nav-logo', { opacity: 0 })
+      gsap.set('.nav-link', { opacity: 0 })
+      gsap.set('.nav-cta', { opacity: 0 })
 
       heroTl
+        // Image reveal
         .to('.hero-image-container', {
-          clipPath: 'inset(0% 0 0 0)',
-          duration: 1.5,
+          clipPath: 'inset(0 0 0% 0)',
+          duration: 1.6,
           ease: 'power4.inOut'
         })
         .to('.hero-image', {
@@ -98,48 +111,50 @@ function App() {
           duration: 2,
           ease: 'power2.out'
         }, '-=1.2')
+        // Navigation
+        .to('.nav-logo', {
+          opacity: 1,
+          duration: 0.5,
+        }, '-=1.5')
+        .to('.nav-link', {
+          opacity: 1,
+          duration: 0.4,
+          stagger: 0.05
+        }, '-=1.3')
+        .to('.nav-cta', {
+          opacity: 1,
+          duration: 0.4,
+        }, '-=1.1')
+        // Tag
+        .to('.hero-tag', {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+        }, '-=1.2')
+        // Titolo
         .to('.hero-title-line', {
           yPercent: 0,
           duration: 1.2,
-          stagger: 0.15,
           ease: 'power4.out'
-        }, '-=1.5')
-        .to('.hero-badge', {
-          opacity: 1,
-          scale: 1,
-          duration: 0.8,
         }, '-=0.8')
+        // Subtitle
         .to('.hero-subtitle', {
           opacity: 1,
           y: 0,
-          duration: 0.8,
+          duration: 0.7,
         }, '-=0.6')
+        // CTA
         .to('.hero-cta', {
           opacity: 1,
           y: 0,
-          duration: 0.8,
-          stagger: 0.1
-        }, '-=0.5')
-        .to('.nav-logo', {
-          opacity: 1,
-          x: 0,
-          duration: 0.6,
-        }, '-=0.6')
-        .to('.nav-link', {
-          opacity: 1,
-          y: 0,
           duration: 0.5,
-          stagger: 0.08
+          stagger: 0.1
         }, '-=0.4')
-        .to('.nav-cta', {
+        // Bottom
+        .to('.hero-bottom', {
           opacity: 1,
-          scale: 1,
           duration: 0.5,
         }, '-=0.3')
-        .to('.hero-scroll', {
-          opacity: 1,
-          duration: 0.6
-        }, '-=0.2')
 
       // Hero parallax
       gsap.to('.hero-image', {
@@ -474,7 +489,11 @@ function App() {
       />
 
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 px-6 md:px-12 py-6">
+      <nav className={`fixed top-0 left-0 right-0 z-50 px-6 md:px-12 py-6 transition-all duration-500 ${
+        isScrolled
+          ? 'bg-[var(--black)]/70 backdrop-blur-xl border-b border-white/5'
+          : 'bg-gradient-to-b from-[var(--black)]/80 via-[var(--black)]/40 to-transparent'
+      }`}>
         <div className="flex items-center justify-between">
           <a href="#" className="nav-logo flex items-center gap-3" data-hover>
             <img src={logo} alt="PROTOS LAB" className="w-12 h-12 md:w-14 md:h-14 rounded-full object-cover" />
@@ -485,7 +504,7 @@ function App() {
               <a
                 key={item}
                 href={`#${item.toLowerCase()}`}
-                className="nav-link font-grotesk text-xs tracking-[0.2em] uppercase text-white/60 hover:text-white transition-colors duration-300 relative group"
+                className="nav-link font-grotesk text-xs tracking-[0.2em] uppercase text-white/90 hover:text-white transition-colors duration-300 relative group"
                 data-hover
               >
                 {item}
@@ -496,7 +515,7 @@ function App() {
 
           <a
             href="#contatti"
-            className="nav-cta font-grotesk text-xs tracking-[0.2em] uppercase px-6 py-3 border border-white/20 text-white hover:bg-[var(--red)] hover:border-[var(--red)] transition-all duration-500"
+            className="nav-cta font-grotesk text-xs tracking-[0.2em] uppercase px-6 py-3 border border-white/40 text-white hover:bg-[var(--red)] hover:border-[var(--red)] transition-all duration-500"
             data-hover
           >
             Prenota
@@ -506,78 +525,125 @@ function App() {
 
       {/* Hero Section */}
       <section ref={heroRef} className="relative h-screen overflow-hidden">
+        {/* Full Background Image */}
         <div className="hero-image-container absolute inset-0">
           <img
             src={heroImage}
             alt="PROTOS LAB"
             className="hero-image w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/30 to-black" />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-[var(--black)]/50" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[var(--black)] via-transparent to-[var(--black)]/30" />
         </div>
 
-        <div className="hero-content relative z-10 h-full flex flex-col justify-end px-6 md:px-12 lg:px-24 pb-20 md:pb-32">
-          <div className="hero-badge inline-flex items-center gap-3 mb-6">
-            <span className="w-2 h-2 rounded-full bg-[var(--red)] animate-pulse" />
-            <span className="font-grotesk text-xs tracking-[0.4em] uppercase text-white/50">
-              Solo su appuntamento • Valle Camonica
+        {/* Grid overlay */}
+        <div className="absolute inset-0 opacity-[0.08]" style={{
+          backgroundImage: 'linear-gradient(rgba(255,255,255,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.3) 1px, transparent 1px)',
+          backgroundSize: '80px 80px'
+        }} />
+
+        {/* Main Content - CENTRATO */}
+        <div className="hero-content relative z-10 h-full flex flex-col justify-between py-32 px-6 md:px-12 lg:px-24">
+
+          {/* Top: Tag - CENTRATO */}
+          <div className="hero-tag flex items-center justify-center gap-4">
+            <div className="w-12 h-[1px] bg-[var(--red)]" />
+            <span className="font-grotesk text-[10px] md:text-xs tracking-[0.5em] uppercase text-white/60">
+              Personal Training Studio
             </span>
+            <div className="w-12 h-[1px] bg-[var(--red)]" />
           </div>
 
-          <h1 className="font-display leading-[0.85] tracking-tighter">
-            <div className="overflow-hidden">
-              <span className="hero-title-line block text-[18vw] md:text-[14vw] text-white">PROTOS</span>
-            </div>
-            <div className="overflow-hidden ml-[5vw] md:ml-[10vw]">
-              <span className="hero-title-line block text-[18vw] md:text-[14vw] text-[var(--red)]">LAB</span>
-            </div>
-          </h1>
+          {/* Center: Titolo - CENTRATO */}
+          <div className="flex-1 flex flex-col items-center justify-center text-center">
+            <h1 className="font-display leading-[0.9] tracking-tight">
+              <div className="overflow-hidden pb-2">
+                <span className="hero-title-line block text-[16vw] md:text-[14vw] lg:text-[12vw] text-white whitespace-nowrap">
+                  PROTOS LAB
+                </span>
+              </div>
+              <div className="overflow-hidden">
+                <span className="hero-title-line block font-grotesk text-base md:text-xl lg:text-2xl tracking-[0.2em] uppercase text-[var(--red)] mt-2">
+                  — Zero compromessi
+                </span>
+              </div>
+            </h1>
 
-          <p className="hero-subtitle font-grotesk text-base md:text-lg text-white/60 max-w-md mt-8 leading-relaxed">
-            Studio privato di personal training esclusivo.
-            <span className="text-white"> Allenamento 1 to 1. Zero compromessi.</span>
-          </p>
+            {/* Descrizione sotto il titolo - CENTRATA */}
+            <p className="hero-subtitle font-grotesk text-sm md:text-base text-[#ADBAD5]/70 max-w-lg mt-8 md:mt-12 leading-relaxed">
+              200m² di spazio esclusivo in Valle Camonica.
+              Allenamento 1:1, attrezzatura professionale, risultati misurabili.
+            </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 mt-10">
+            {/* CTA - CENTRATI */}
+            <div className="flex items-center justify-center gap-6 mt-8 md:mt-12">
+              <a
+                href="#contatti"
+                className="hero-cta group relative overflow-hidden bg-[var(--red)] px-8 md:px-12 py-4 md:py-5"
+                data-hover
+              >
+                <span className="relative z-10 font-grotesk text-xs md:text-sm tracking-[0.2em] uppercase text-white group-hover:text-[var(--black)] transition-colors duration-500">
+                  Prenota
+                </span>
+                <div className="absolute inset-0 bg-white -translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out" />
+              </a>
+
+              <a
+                href="#servizi"
+                className="hero-cta group flex items-center gap-3"
+                data-hover
+              >
+                <span className="font-grotesk text-xs md:text-sm tracking-[0.15em] uppercase text-white/60 group-hover:text-white transition-colors">
+                  Esplora
+                </span>
+                <svg className="w-4 h-4 text-white/40 group-hover:text-[var(--red)] group-hover:translate-x-1 transition-all duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </a>
+            </div>
+          </div>
+
+          {/* Bottom: Info strip */}
+          <div className="hero-bottom flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+            {/* Location */}
+            <div className="flex items-center gap-4">
+              <div className="w-2 h-2 rounded-full bg-[var(--red)] animate-pulse" />
+              <div>
+                <span className="font-grotesk text-[10px] tracking-[0.3em] uppercase text-white/40 block">Location</span>
+                <span className="font-grotesk text-sm text-white">Sellero (BS), Italia</span>
+              </div>
+            </div>
+
+            {/* Scroll */}
+            <div className="hero-scroll flex items-center gap-4">
+              <span className="font-grotesk text-[10px] tracking-[0.3em] uppercase text-white/40">
+                Scorri
+              </span>
+              <div className="w-12 h-[1px] bg-white/20 relative overflow-hidden">
+                <div className="absolute inset-0 bg-[var(--red)] -translate-x-full animate-[scrollLineX_2s_ease-in-out_infinite]" />
+              </div>
+            </div>
+
+            {/* Social hint */}
             <a
-              href="#contatti"
-              className="hero-cta group relative inline-flex items-center gap-4 bg-[var(--red)] px-8 py-4 overflow-hidden"
+              href="https://www.instagram.com/protos.lab/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hero-social group flex items-center gap-3"
               data-hover
             >
-              <span className="relative z-10 font-grotesk text-sm tracking-[0.15em] uppercase text-white group-hover:text-black transition-colors duration-500">
-                Inizia il tuo percorso
+              <span className="font-grotesk text-[10px] tracking-[0.3em] uppercase text-white/40 group-hover:text-white/70 transition-colors">
+                @protos.lab
               </span>
-              <svg className="relative z-10 w-5 h-5 text-white group-hover:text-black group-hover:translate-x-1 transition-all duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-              </svg>
-              <div className="absolute inset-0 bg-white transform translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out" />
-            </a>
-
-            <a
-              href="#servizi"
-              className="hero-cta group inline-flex items-center gap-4 px-8 py-4 border border-white/20 hover:border-white/40 transition-colors"
-              data-hover
-            >
-              <span className="font-grotesk text-sm tracking-[0.15em] uppercase text-white/60 group-hover:text-white transition-colors">
-                Scopri di più
-              </span>
-              <svg className="w-5 h-5 text-white/40 group-hover:text-white group-hover:translate-y-1 transition-all duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+              <svg className="w-4 h-4 text-white/40 group-hover:text-[var(--red)] transition-colors" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
               </svg>
             </a>
           </div>
         </div>
 
-        <div className="hero-scroll absolute bottom-8 right-8 md:right-12">
-          <div className="flex flex-col items-center gap-3">
-            <span className="font-grotesk text-[10px] tracking-[0.3em] uppercase text-white/30" style={{ writingMode: 'vertical-rl' }}>
-              Scroll
-            </span>
-            <div className="w-[1px] h-16 bg-white/20 overflow-hidden">
-              <div className="w-full h-full bg-[var(--red)] animate-[scrollLine_1.5s_ease-in-out_infinite]" />
-            </div>
-          </div>
-        </div>
+        {/* Linea verticale decorativa a destra */}
+        <div className="hero-line hidden lg:block absolute top-0 bottom-0 right-24 w-[1px] bg-gradient-to-b from-transparent via-white/10 to-transparent" />
       </section>
 
       {/* Marquee */}
@@ -607,7 +673,7 @@ function App() {
               </div>
             </h2>
           </div>
-          <p className="font-grotesk text-white/40 max-w-sm mt-8 md:mt-0 leading-relaxed">
+          <p className="font-grotesk text-[#ADBAD5]/60 max-w-sm mt-8 md:mt-0 leading-relaxed">
             Ogni programma è costruito intorno a te. Nessun template. Solo risultati misurabili.
           </p>
         </div>
@@ -641,7 +707,7 @@ function App() {
                   {service.title}
                 </h3>
 
-                <p className="font-grotesk text-sm text-white/40 leading-relaxed max-w-sm">
+                <p className="font-grotesk text-sm text-[#ADBAD5]/50 leading-relaxed max-w-sm">
                   {service.desc}
                 </p>
 
@@ -668,7 +734,7 @@ function App() {
         </div>
 
         <div ref={horizontalRef} className="flex items-center h-screen pl-6 md:pl-24">
-          {[studioImage1, studioImage5, studioImage2, studioImage6, studioImage3, studioImage7, studioImage8, studioImage4].map((img, i) => (
+          {[studioImage1, studioImage5, studioImage2, studioImage6, studioImage3].map((img, i) => (
             <div
               key={i}
               className="gallery-item flex-shrink-0 h-[70vh] w-[80vw] md:w-[50vw] mr-8 overflow-hidden"
@@ -740,11 +806,11 @@ function App() {
                   <strong className="text-white">PROTOS</strong> — dal greco antico πρῶτος.
                   Significa <em className="text-[var(--red)]">primo, migliore</em>.
                 </p>
-                <p className="method-text font-grotesk text-base text-white/50 leading-relaxed">
+                <p className="method-text font-grotesk text-base text-[#ADBAD5]/60 leading-relaxed">
                   A differenza delle palestre tradizionali, qui lavori esclusivamente 1 to 1.
                   Nessuna distrazione. Nessun compromesso. Solo tu e il tuo obiettivo.
                 </p>
-                <p className="method-text font-grotesk text-base text-white/50 leading-relaxed">
+                <p className="method-text font-grotesk text-base text-[#ADBAD5]/60 leading-relaxed">
                   Programmazione scientifica. Monitoraggio costante. Risultati misurabili.
                 </p>
               </div>
@@ -779,7 +845,7 @@ function App() {
             <h2 className="font-display text-[15vw] md:text-[12vw] leading-[0.85] tracking-tighter">
               <span className="studio-title-line block">LO STUDIO</span>
             </h2>
-            <p className="font-grotesk text-white/40 max-w-sm leading-relaxed lg:pb-4">
+            <p className="font-grotesk text-[#ADBAD5]/60 max-w-sm leading-relaxed lg:pb-4">
               200mq di spazio esclusivo. Attrezzatura professionale. Solo tu e il tuo trainer.
             </p>
           </div>
@@ -879,7 +945,7 @@ function App() {
             </div>
           </h2>
 
-          <p className="font-grotesk text-base md:text-lg text-white/40 mt-8 mb-12 max-w-md mx-auto">
+          <p className="font-grotesk text-base md:text-lg text-[#ADBAD5]/60 mt-8 mb-12 max-w-md mx-auto">
             La tua trasformazione inizia con una scelta.
           </p>
 

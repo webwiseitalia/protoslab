@@ -2,6 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --red: #F6163B;
+  --gray: #ADBAD5;
+  --black: #0A1117;
+  --black-light: #0f1820;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -14,7 +21,7 @@ html {
 
 body {
   font-family: 'Inter', sans-serif;
-  background-color: #0a0a0a;
+  background-color: var(--black);
   color: #ffffff;
 }
 
@@ -46,10 +53,10 @@ html {
 
 @keyframes pulse-red {
   0%, 100% {
-    box-shadow: 0 0 0 0 rgba(196, 30, 58, 0.7);
+    box-shadow: 0 0 0 0 rgba(246, 22, 59, 0.7);
   }
   50% {
-    box-shadow: 0 0 0 10px rgba(196, 30, 58, 0);
+    box-shadow: 0 0 0 10px rgba(246, 22, 59, 0);
   }
 }
 
@@ -65,15 +72,15 @@ html {
 .hero-overlay {
   background: linear-gradient(
     to bottom,
-    rgba(10, 10, 10, 0.6) 0%,
-    rgba(10, 10, 10, 0.4) 50%,
-    rgba(10, 10, 10, 0.95) 100%
+    rgba(10, 17, 23, 0.6) 0%,
+    rgba(10, 17, 23, 0.4) 50%,
+    rgba(10, 17, 23, 0.95) 100%
   );
 }
 
 /* Red gradient text */
 .text-gradient-red {
-  background: linear-gradient(135deg, #C41E3A 0%, #ff4d6d 100%);
+  background: linear-gradient(135deg, #F6163B 0%, #ff4d6d 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -86,27 +93,27 @@ html {
 
 .card-hover:hover {
   transform: translateY(-5px);
-  border-color: #C41E3A;
+  border-color: #F6163B;
 }
 
 /* Button styles */
 .btn-primary {
-  background: linear-gradient(135deg, #C41E3A 0%, #a01830 100%);
+  background: linear-gradient(135deg, #F6163B 0%, #c41230 100%);
   transition: all 0.3s ease;
 }
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 30px rgba(196, 30, 58, 0.4);
+  box-shadow: 0 10px 30px rgba(246, 22, 59, 0.4);
 }
 
 .btn-outline {
-  border: 2px solid #C41E3A;
+  border: 2px solid #F6163B;
   transition: all 0.3s ease;
 }
 
 .btn-outline:hover {
-  background: #C41E3A;
+  background: #F6163B;
   color: white;
 }
 
@@ -116,7 +123,55 @@ html {
   background: linear-gradient(
     to right,
     transparent,
-    rgba(196, 30, 58, 0.5),
+    rgba(246, 22, 59, 0.5),
     transparent
   );
+}
+
+/* Hero decorative lines */
+.hero-line-1 {
+  transform-origin: top;
+}
+
+.hero-line-2 {
+  transform-origin: left;
+}
+
+/* Scroll line animation */
+@keyframes scrollLine {
+  0% {
+    transform: translateY(-100%);
+  }
+  50% {
+    transform: translateY(0%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes scrollLineX {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.hero-line {
+  transform-origin: top;
+}
+
+/* Glow effect for hero */
+.hero-glow {
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(246, 22, 59, 0.15) 0%, transparent 70%);
+  filter: blur(80px);
+  pointer-events: none;
 }
